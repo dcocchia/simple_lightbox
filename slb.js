@@ -4,8 +4,8 @@
 		scrollSpeed: 200,
 		themeClass: 'default',
 		showOverlay: true,
-		overlayOpacity: 1,
-		overlayColor: "AAA",
+		overlayOpacity: 85,
+		overlayColor: "#000",
 		closeOnOverlayClick: true,
 		photoService: "",
 		photoServiceApiKey: "",
@@ -199,7 +199,7 @@
 				thisImg = imageArr[i];
 				imgUrl = service.constructImageUrl(thisImg);
 				imgTitle = services.traverseHierarchy(thisImg, service.titleHierarchy);
-				imgList.push("<li><h4>" + imgTitle + "</h4><div class='imgWrapper'><img src='" + imgUrl + "'/></div></li>");
+				imgList.push("<li class='image-outter-wrapper'><h4>" + imgTitle + "</h4><div class='image-wrapper'><img src='" + imgUrl + "'/></div></li>");
 			}
 
 			imgWrapper.insertAdjacentHTML("beforeend", imgList.join(""));
@@ -245,9 +245,12 @@
 		},
 
 		render: function() {
+			var overlayStyles = "background-color: " + this.config.overlayColor + 
+				"; opacity: ." + this.config.overlayOpacity + ";";
+
 			this.trigger("beforeRender");
 
-			this.container.insertAdjacentHTML("beforeend", "<div class='simple-light-box-overlay hidden'></div>");
+			this.container.insertAdjacentHTML("beforeend", "<div class='simple-light-box-overlay hidden' style='" + overlayStyles + "'></div>");
 			this.container.insertAdjacentHTML("beforeend", "<div class='simple-light-box " + this.config.themeClass + " hidden'><ul class='images-wrapper'></ul></div>");
 
 			this._bindElms();

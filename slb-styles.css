@@ -1,0 +1,58 @@
+.simple-light-box.hidden,
+.simple-light-box .hidden,
+.simple-light-box-overlay.hidden,
+.simple-light-box-overlay .hidden {
+	display: none;
+}
+
+.simple-light-box-overlay {
+	position: fixed;
+	background-color: #000;
+	opacity: .85;
+	z-index: 10;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.simple-light-box {
+	z-index: 20;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+}
+
+.simple-light-box .images-wrapper {
+	position: absolute;
+	margin: auto;
+	padding: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 80%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.simple-light-box .images-wrapper .image-outter-wrapper {
+	list-style: none;
+	width: 100%;
+	display: none;
+	position: relative;
+	-webkit-transition-property: left;
+	-webkit-transition-timing-function: ease-in-out;
+	-o-transition-property: left;
+	-o-transition-timing-function: ease-in-out;
+	transition-property: left;
+	transition-timing-function: ease-in-out;
+}
+
+.simple-light-box .images-wrapper .image-outter-wrapper .current {
+	left: 0;
+}
+
+.simple-light-box .images-wrapper .image-outter-wrapper .next {
+	left: 100%;
+}
