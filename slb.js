@@ -103,6 +103,7 @@
 		this.config = {};
 		this._events = {};
 		this.imageSet = [];
+		this.elms = {};
 
 		for (var attr in defaults) {
 			if (defaults.hasOwnProperty(attr)) {
@@ -118,6 +119,8 @@
 			currentSlide: this.config.startingSlide,
 			isSliding: false
 		};
+
+		this.instanceId = Math.floor((Math.random() * 100000) + 1);
 
 		this._init();
 	}
@@ -168,29 +171,20 @@
 		_bindElms: function() {
 			var body = document.body;
 			var boundClose = this.close.bind(this);
-			var closeBtn, leftArrow, rightArrow, dots;
-
-			if (this.config.showOverlay) { 
-				this.overlay = body.querySelector(".simple-light-box-overlay");
-			}
+			var elms = this.elms;
 			
-			this.el = this.container.querySelector(".simple-light-box");
-			closeBtn = this.el.querySelector(".close-btn");
-			leftArrow = this.el.querySelector(".arrow.left");
-			rightArrow = this.el.querySelector(".arrow.right");
-			
-			closeBtn.removeEventListener('click', boundClose);
-			closeBtn.addEventListener('click', boundClose);
+			elms.closeBtn.removeEventListener('click', boundClose);
+			elms.closeBtn.addEventListener('click', boundClose);
 
-			leftArrow.removeEventListener('click', this.next.bind(this));
-			leftArrow.addEventListener('click', this.next.bind(this));
+			elms.arrowLeft.removeEventListener('click', this.prev.bind(this));
+			elms.arrowLeft.addEventListener('click', this.prev.bind(this));
 
-			rightArrow.removeEventListener('click', this.prev.bind(this));
-			rightArrow.addEventListener('click', this.prev.bind(this));
+			elms.arrowRight.removeEventListener('click', this.next.bind(this));
+			elms.arrowRight.addEventListener('click', this.next.bind(this));
 
 			if (this.config.closeOnOverlayClick) {
-				this.overlay.removeEventListener('click', boundClose);
-				this.overlay.addEventListener('click', boundClose);
+				elms.overlay.removeEventListener('click', boundClose);
+				elms.overlay.addEventListener('click', boundClose);
 			}
 
 		},
@@ -235,8 +229,25 @@
 			
 			return container;
 		},
+
+		_findElms: function() {
+			//find and cache commonly used elements
+			this.el = this.container.querySelector(
+				"[data-simple-lightbox-id='" + this.instanceId + "']"
+			);
+
+			this.elms = {
+				arrowLeft: this.el.querySelector('.arrow.left'),
+				arrowRight: this.el.querySelector('.arrow.right'),
+				closeBtn: this.el.querySelector(".close-btn"),
+				dots: this.el.querySelector('.dots'),
+				imagesWrapper: this.el.querySelector('.images-wrapper'),
+				overlay: document.body.querySelector(
+					"[data-simple-lightbox-overlay-id='" + this.instanceId + "']"
+				)
+			}
+		},	
 		
-		//semi-private methods and attributes
 		_init: function() {
 			this.trigger("beforeInit", this);
 
@@ -332,6 +343,10 @@
 			this.trigger("afterImageRequest", this);
 		},
 
+		_setIndicator: function(slideNum) {
+
+		},
+
 		_throwError: function(msg) {
 			throw new Error("SimpleLightBox Error: " + msg);
 		},
@@ -340,7 +355,7 @@
 			this.trigger("beforeClose", this);
 			this.el.classList.add("hidden");
 			if (this.config.showOverlay) {
-				this.overlay.classList.add("hidden")
+				this.elms.overlay.classList.add("hidden")
 			}
 			this.trigger("afterClose", this);
 		},
@@ -386,7 +401,7 @@
 			this.trigger("beforeOpen", this);
 			this.el.classList.remove("hidden");
 			if (this.config.showOverlay) {
-				this.overlay.classList.remove("hidden")
+				this.elms.overlay.classList.remove("hidden")
 			}
 			this.trigger("afterOpen", this);
 		},
@@ -406,23 +421,63 @@
 
 			this.container.insertAdjacentHTML(
 				"beforeend", 
-				"<div class='simple-light-box-overlay hidden' style='" + 
-				overlayStyles + "'></div>"
+				"<div class='simple-light-box-overlay hidden' " + 
+				"data-simple-lightbox-overlay-id='" + this.instanceId + 
+				"' style='" + overlayStyles + "'></div>"
 			);
+
 			this.container.insertAdjacentHTML(
 				"beforeend", 
 				"<div class='simple-light-box " + this.config.themeClass + 
-				" hidden'><button class='close-btn'></button>" + 
+				" hidden' data-simple-lightbox-id='" + this.instanceId + "'>" + 
+				"<button class='close-btn'></button>" + 
 				"<ul class='images-wrapper'></ul>" + 
 				"<div role='button' tabindex=0 class='arrow left'></div>" + 
 				"<div role='button' tabindex=0 class='arrow right'></div>" + 
 				"</div>");
 
+			this._findElms();
 			this._bindElms();
 			this.trigger("afterRender", this);
 		},
 
 		slideTo: function(slideNum) {
+			var currentSlide, nextSlide, direction;
+
+			if (this.status.isSliding) { return; }
+
+			this.status.isSliding = true;
+
+			direction = (slideNum > this.status.currentSlide) ? "left" : "right";
+
+			currentSlide = this.elms.imagesWrapper.querySelector(".image-outter-wrapper.current");
+
+			if (direction === "left") {
+				nextSlide = currentSlide.nextSibling || this.elms.imagesWrapper.firstChild;
+				nextSlide.classList.add("next");
+			} else {
+				nextSlide = currentSlide.previousSibling || this.elms.imagesWrapper.lastChild;
+				nextSlide.classList.add("prev");
+			}
+			
+			nextSlide.offsetWidth;
+			nextSlide.classList.add(direction);
+			currentSlide.classList.add(direction);
+
+			var timer = setTimeout(function() {
+				currentSlide.classList.remove('current', direction);
+				nextSlide.classList.add('current');
+				nextSlide.classList.remove("next", "prev", direction);
+
+				if (slideNum > this.imageSet.length) {
+					slideNum = 1;
+				} else if (slideNum < 0) {
+					slideNum = this.imageSet.length;
+				}
+
+				this.status.currentSlide = slideNum;
+				this.status.isSliding = false;
+			}.bind(this), this.config.scrollSpeed + 100);
 
 		},
 
