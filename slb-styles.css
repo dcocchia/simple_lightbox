@@ -5,54 +5,207 @@
 	display: none;
 }
 
+.simple-light-box {
+	z-index: 20;
+	width: 80%;
+	height: 80%;
+}
+
+.simple-light-box * {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 .simple-light-box-overlay {
-	position: fixed;
 	background-color: #000;
 	opacity: .85;
 	z-index: 10;
-	left: 0;
-	top: 0;
-	bottom: 0;
-	right: 0;
 }
 
+.simple-light-box-overlay,
 .simple-light-box {
-	z-index: 20;
-	position: fixed;
-	width: 100%;
-	height: 100%;
-}
-
-.simple-light-box .images-wrapper {
-	position: absolute;
-	margin: auto;
-	padding: 0;
+	top: 0;
 	left: 0;
 	right: 0;
+	bottom: 0;
+	margin: auto;
+	position: fixed;
+}
+
+/*****************
+** Close Button	**
+*****************/
+.simple-light-box .close-btn {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 5;
+}
+
+.simple-light-box .close-btn:after {
+	content: "x";
+	font-size: 28px;
+	line-height: 14px;
+}
+
+.simple-light-box .close-btn:hover {
+	cursor: pointer;
+}
+
+/*****************
+**	  Arrows	**
+*****************/
+.simple-light-box >.arrow {
+	height: 100%;
+	width: 10%;
+	position: absolute;
+	top: 0;
+}
+
+.simple-light-box >.arrow:hover {
+	cursor: pointer;
+}
+
+.simple-light-box >.arrow:after {
+	height: 70px;
+	display: block;
+	margin: auto;
 	top: 0;
 	bottom: 0;
-	width: 80%;
+	position: absolute;
+	line-height: 55px;
+	font-size: 100px;
+}
+
+.simple-light-box >.arrow.left {
+	left: 0;
+}
+
+.simple-light-box >.arrow.left:after {
+	content: "<";
+	left: 20px;
+	text-align: left;
+}
+
+.simple-light-box >.arrow.right {
+	right: 0;
+}
+
+.simple-light-box >.arrow.right:after {
+	content: ">";
+	right: 20px;
+	text-align: right;
+}
+
+/*******************
+** 	    Dots	  **
+*******************/
+.simple-light-box >.dots {
+	margin: auto;
+	position: absolute;
+	bottom: 15px;
+	padding: 0;
+	width: 100%;
+	left: 0;
+	right: 0;
+	text-align: center;
+}
+
+.simple-light-box >.dots>li {
+	width: 12px;
+	height: 12px;
+	display: inline-block;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	border-radius: 50%;
+	list-style: none;
+}
+
+.simple-light-box >.dots>li:hover {
+	cursor: pointer;
+}
+
+.simple-light-box >.dots>li.current:hover {
+	cursor: default;
+}
+
+/*******************
+** Image Wrappers **
+*******************/
+.simple-light-box .images-wrapper{
 	height: 100%;
+	width: 100%;
+	padding: 0;
 	overflow: hidden;
 }
 
 .simple-light-box .images-wrapper .image-outter-wrapper {
-	list-style: none;
+	height: 100%;
 	width: 100%;
 	display: none;
 	position: relative;
+	list-style: none;
 	-webkit-transition-property: left;
 	-webkit-transition-timing-function: ease-in-out;
 	-o-transition-property: left;
 	-o-transition-timing-function: ease-in-out;
 	transition-property: left;
 	transition-timing-function: ease-in-out;
+
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	backface-visibility: hidden;
+
+	-webkit-perspective: 1000px;
+	-moz-perspective: 1000px;
+	-ms-perspective: 1000px;
+	perspective: 1000px;
 }
 
-.simple-light-box .images-wrapper .image-outter-wrapper .current {
+.simple-light-box .image-outter-wrapper.current {
 	left: 0;
 }
 
-.simple-light-box .images-wrapper .image-outter-wrapper .next {
+.simple-light-box .image-outter-wrapper.next {
 	left: 100%;
+}
+
+.simple-light-box .image-outter-wrapper.current,
+.simple-light-box .image-outter-wrapper.next {
+	display: block;
+
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	-ms-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+}
+
+.simple-light-box .image-wrapper {
+	width: 100%;
+	height: 80%;
+}
+
+.simple-light-box .images-wrapper,
+.simple-light-box .image-wrapper,
+.simple-light-box .image-wrapper img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	display: block;
+}
+
+.simple-light-box .image-wrapper img {
+	max-width: 100%;
+	max-height: 100%;
 }

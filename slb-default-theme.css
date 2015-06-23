@@ -1,0 +1,68 @@
+.simple-light-box.default {
+	background-color: #212124;
+	border-radius: 8px;
+	box-shadow: #181818 0px 0px 2px;
+}
+
+.simple-light-box.default .image-outter-wrapper > h4 {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	font-weight: 300;
+	font-size: 30px;
+	text-align: center;
+	color: #fff;
+	margin: 0;
+	padding: 15px 0;
+}
+
+.simple-light-box.default .close-btn {
+	border: 0;
+	background-color: transparent;
+}
+
+.simple-light-box.default .close-btn:hover,
+.simple-light-box.default >.arrow:hover {
+	color: #ccc;
+}
+
+.simple-light-box.default .close-btn,
+.simple-light-box.default >.arrow {
+	color: #fff;
+	-webkit-transition-property: color;
+	-webkit-transition-timing-function: ease-in-out;
+	-webkit-transition-duration: .3s;
+	-o-transition-property: color;
+	-o-transition-timing-function: ease-in-out;
+	-o-transition-duration: .3s;
+	transition-property: color;
+	transition-timing-function: ease-in-out;
+	transition-duration: .3s;
+}
+
+.simple-light-box.default >.arrow {
+	font-size: 20px
+}
+
+.simple-light-box.default >.dots>li {
+	border: 1px solid #fff;
+	-webkit-transition-property: background-color;
+	-webkit-transition-timing-function: ease-in-out;
+	-webkit-transition-duration: .3s;
+	-o-transition-property: background-color;
+	-o-transition-timing-function: ease-in-out;
+	-o-transition-duration: .3s;
+	transition-property: background-color;
+	transition-timing-function: ease-in-out;
+	transition-duration: .3s;
+}
+
+.simple-light-box.default >.dots>li.current {
+	background-color: #fff;
+}
+
+.simple-light-box >.dots>li:hover {
+	background-color: #ccc;
+}
+
+.simple-light-box >.dots>li.current:hover {
+	background-color: #fff;
+}
