@@ -4,6 +4,7 @@
 		scrollSpeed: 600,
 		startingSlide: 1,
 		themeClass: 'default',
+		showDots: true,
 		showOverlay: true,
 		overlayOpacity: 85,
 		overlayColor: "#000",
@@ -171,16 +172,29 @@
 		_bindElms: function() {
 			var body = document.body;
 			var boundClose = this.close.bind(this);
+			var boundChecKey = this._checkKey.bind(this);
 			var elms = this.elms;
+
+			this.el.removeEventListener('keydown', boundChecKey);
+			this.el.addEventListener('keydown', boundChecKey);
+
+			this.elms.imagesWrapper.removeEventListener('keydown', boundChecKey);
+			this.elms.imagesWrapper.addEventListener('keydown', boundChecKey);
 			
 			elms.closeBtn.removeEventListener('click', boundClose);
 			elms.closeBtn.addEventListener('click', boundClose);
+			elms.closeBtn.removeEventListener('keydown', boundChecKey);
+			elms.closeBtn.addEventListener('keydown', boundChecKey);
 
 			elms.arrowLeft.removeEventListener('click', this.prev.bind(this));
 			elms.arrowLeft.addEventListener('click', this.prev.bind(this));
+			elms.arrowLeft.removeEventListener('keydown', boundChecKey);
+			elms.arrowLeft.addEventListener('keydown', boundChecKey);
 
 			elms.arrowRight.removeEventListener('click', this.next.bind(this));
 			elms.arrowRight.addEventListener('click', this.next.bind(this));
+			elms.arrowRight.removeEventListener('keydown', boundChecKey);
+			elms.arrowRight.addEventListener('keydown', boundChecKey);
 
 			if (this.config.closeOnOverlayClick) {
 				elms.overlay.removeEventListener('click', boundClose);
@@ -203,6 +217,14 @@
 			}
 
 			return ready;
+		},
+
+		_checkKey: function(e) {
+			if (e.keyCode === 13) {
+				e.target.click();
+			} else if (e.keyCode === 27) {
+				this.close();
+			}
 		},
 
 		_dotClick: function(e) {
@@ -242,10 +264,15 @@
 				closeBtn: this.el.querySelector(".close-btn"),
 				dots: this.el.querySelector('.dots'),
 				imagesWrapper: this.el.querySelector('.images-wrapper'),
+				loader: this.el.querySelector('.loader'),
 				overlay: document.body.querySelector(
 					"[data-simple-lightbox-overlay-id='" + this.instanceId + "']"
 				)
 			}
+		},
+
+		_hideLoader: function() {
+			this.elms.loader.classList.add('hidden');
 		},	
 		
 		_init: function() {
@@ -266,7 +293,7 @@
 		},
 
 		_renderDots: function(imageArr) {
-			var dotsHTML = ["<ol class='dots'>"];
+			var dotsHTML = [];
 			var current;
 
 			for (var i = 0; i < imageArr.length; i++) {
@@ -277,12 +304,11 @@
 				}
 
 				dotsHTML.push(
-					"<li class='" + current + "' data-slide=" 
-					+ (i + 1) + "></li>"
+					"<li class='" + current + "' data-slide=" + 
+					(i + 1) + " tabindex=0 role='button' aria-label='go to slide " + 
+					(i + 1) + "'></li>"
 				);
 			}
-
-			dotsHTML.push("</ol>")
 
 			return dotsHTML.join("");
 		},
@@ -298,7 +324,7 @@
 			var dots = this._renderDots(imageArr);
 			var thisImg, imgTitle, imgUrl, current;
 
-			this.imageSet.push(imageArr);
+			this.imageSet = this.imageSet.concat(imageArr);
 
 			for (var i = 0; i < imageArr.length; i++) {
 				if (i + 1 === this.config.startingSlide) { 
@@ -314,11 +340,11 @@
 				imgList.push("<li class='image-outter-wrapper " + current + 
 					"' style='" + photoWrapperStyles + "'>" + "<h4>" + 
 					imgTitle + "</h4><div class='image-wrapper'><img src='" + 
-					imgUrl + "'/></div></li>");
+					imgUrl + "'alt='" + imgTitle + "'/></div></li>");
 			}
 
 			imgWrapper.insertAdjacentHTML("beforeend", imgList.join(""));
-			this.el.insertAdjacentHTML("beforeend", dots);
+			this.elms.dots.insertAdjacentHTML("beforeend", dots);
 			this._bindDots();
 		},
 
@@ -326,16 +352,20 @@
 			var service = services[this.config.photoService];
 			this.trigger("beforeImageRequest", this);
 			
+			this._showLoader();
+
 			this._ajax({
 				url: service.getUrl({
 					api_key: this.config.photoServiceApiKey
 				}),
 				success: function(resp) {
 					this.trigger("imageRequestResponse");
+					this._hideLoader();
 					this._renderImages(services.traverseHierarchy(resp, service.dataHierarchy));
 				},
 				error: function(error) {
 					this.trigger("imageRequestResponseError");
+					this._hideLoader();
 					this._throwError(error);
 				}
 			});
@@ -344,7 +374,12 @@
 		},
 
 		_setIndicator: function(slideNum) {
+			this.elms.dots.querySelector('.current').classList.remove('current');
+			this.elms.dots.querySelector('[data-slide="' + slideNum + '"]').classList.add('current');
+		},
 
+		_showLoader: function() {
+			this.elms.loader.classList.remove('hidden');
 		},
 
 		_throwError: function(msg) {
@@ -354,8 +389,10 @@
 		close: function() {
 			this.trigger("beforeClose", this);
 			this.el.classList.add("hidden");
+			this.el.setAttribute("aria-hidden", "true");
 			if (this.config.showOverlay) {
 				this.elms.overlay.classList.add("hidden")
+				this.elms.overlay.setAttribute("aria-hidden", "true");
 			}
 			this.trigger("afterClose", this);
 		},
@@ -400,8 +437,10 @@
 		open: function() {
 			this.trigger("beforeOpen", this);
 			this.el.classList.remove("hidden");
+			this.el.removeAttribute("aria-hidden");
 			if (this.config.showOverlay) {
 				this.elms.overlay.classList.remove("hidden")
+				this.elms.overlay.removeAttribute("aria-hidden");
 			}
 			this.trigger("afterOpen", this);
 		},
@@ -417,24 +456,29 @@
 				this.config.overlayColor + "; " + 
 				"opacity: ." + this.config.overlayOpacity + ";";
 
+			var dots = (this.config.showDots) 
+				? "<ol class='dots'></ol>"
+				: "<ol class='dots hidden'></ol>"
+
 			this.trigger("beforeRender", this);
 
 			this.container.insertAdjacentHTML(
 				"beforeend", 
 				"<div class='simple-light-box-overlay hidden' " + 
 				"data-simple-lightbox-overlay-id='" + this.instanceId + 
-				"' style='" + overlayStyles + "'></div>"
+				"' style='" + overlayStyles + "' aria-hidden='true'></div>"
 			);
 
 			this.container.insertAdjacentHTML(
 				"beforeend", 
 				"<div class='simple-light-box " + this.config.themeClass + 
-				" hidden' data-simple-lightbox-id='" + this.instanceId + "'>" + 
-				"<button class='close-btn'></button>" + 
+				" hidden' data-simple-lightbox-id='" + this.instanceId + "' aria-hidden='true'>" + 
+				"<button class='close-btn' aria-label='close photo gallery'></button>" + 
 				"<ul class='images-wrapper'></ul>" + 
-				"<div role='button' tabindex=0 class='arrow left'></div>" + 
-				"<div role='button' tabindex=0 class='arrow right'></div>" + 
-				"</div>");
+				"<div role='button' aria-label='previous slide' tabindex=0 class='arrow left'></div>" + 
+				"<div role='button' aria-label='next slide' tabindex=0 class='arrow right'></div>" +
+				"<div class='loader hidden'></div>" +
+				dots + "</div>");
 
 			this._findElms();
 			this._bindElms();
@@ -453,10 +497,24 @@
 			currentSlide = this.elms.imagesWrapper.querySelector(".image-outter-wrapper.current");
 
 			if (direction === "left") {
-				nextSlide = currentSlide.nextSibling || this.elms.imagesWrapper.firstChild;
+				if (slideNum > this.imageSet.length) {
+					nextSlide = this.elms.imagesWrapper.firstChild;
+				} else if (Math.abs(slideNum - this.status.currentSlide) === 1) {
+					nextSlide = currentSlide.nextSibling;
+				} else {
+					nextSlide = this.elms.imagesWrapper.children[slideNum - 1];
+				}
+				
 				nextSlide.classList.add("next");
 			} else {
-				nextSlide = currentSlide.previousSibling || this.elms.imagesWrapper.lastChild;
+				if (slideNum < 1) {
+					nextSlide = this.elms.imagesWrapper.lastChild;
+				} else if (Math.abs(slideNum - this.status.currentSlide) === 1) {
+					nextSlide = currentSlide.previousSibling;
+				} else {
+					nextSlide = this.elms.imagesWrapper.children[slideNum - 1];
+				}
+
 				nextSlide.classList.add("prev");
 			}
 			
@@ -464,18 +522,20 @@
 			nextSlide.classList.add(direction);
 			currentSlide.classList.add(direction);
 
+			if (slideNum > this.imageSet.length) {
+				slideNum = 1;
+			} else if (slideNum < 1) {
+				slideNum = this.imageSet.length;
+			}
+
+			this._setIndicator(slideNum);
+
 			var timer = setTimeout(function() {
 				currentSlide.classList.remove('current', direction);
 				nextSlide.classList.add('current');
 				nextSlide.classList.remove("next", "prev", direction);
 
-				if (slideNum > this.imageSet.length) {
-					slideNum = 1;
-				} else if (slideNum < 0) {
-					slideNum = this.imageSet.length;
-				}
-
-				this.status.currentSlide = slideNum;
+				this.status.currentSlide = slideNum;	
 				this.status.isSliding = false;
 			}.bind(this), this.config.scrollSpeed + 100);
 
