@@ -472,7 +472,8 @@
 			this.container.insertAdjacentHTML(
 				"beforeend", 
 				"<div class='simple-light-box " + this.config.themeClass + 
-				" hidden' data-simple-lightbox-id='" + this.instanceId + "' aria-hidden='true'>" + 
+				" hidden' data-simple-lightbox-id='" + this.instanceId + "'" +
+				" aria-hidden='true' aria-live='polite'>" + 
 				"<button class='close-btn' aria-label='close photo gallery'></button>" + 
 				"<ul class='images-wrapper'></ul>" + 
 				"<div role='button' aria-label='previous slide' tabindex=0 class='arrow left'></div>" + 
