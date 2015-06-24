@@ -490,6 +490,8 @@
 
 			if (this.status.isSliding) { return; }
 
+			this.trigger("slideStart", this);
+
 			this.status.isSliding = true;
 
 			direction = (slideNum > this.status.currentSlide) ? "left" : "right";
@@ -537,6 +539,8 @@
 
 				this.status.currentSlide = slideNum;	
 				this.status.isSliding = false;
+
+				this.trigger("slideDone", this);
 			}.bind(this), this.config.scrollSpeed + 100);
 
 		},
