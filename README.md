@@ -45,31 +45,31 @@ And that's it! There are a bunch of ways to customize your lightbox, control it 
 Most features of the lightbox have a default value, but feel free to override them when creating your lightbox instance.
 
 ###options
-* _container_ -- 
+* **container** -- 
 	selector for container to append lightbox to - defaulted to body
-* _scrollSpeed_ -- 
+* **scrollSpeed** -- 
 	speed at which images scroll by in millseconds - defaulted to 600ms
-* _startingSlide_ -- 
+* **startingSlide** -- 
 	slide to start gallery on by integer starting from 1 - defaulted to 1
-* _themeClass_ -- 
+* **themeClass** -- 
 	style class to add to lightbox. This is how you control the theme of your lightbox - defaulted to "default"
-* _showDots_ -- 
+* **showDots** -- 
 	boolean to show dot indicators or not - defaulted to true
-* _showOverlay_ -- 
+* **showOverlay** -- 
 	boolean to show the background overlay or not - defaulted to true
-* _overlayOpacity_ -- 
+* **overlayOpacity** -- 
 	percent of opacity of the background overlay - defaulted to 85
-* _overlayColor_ -- 
+* **overlayColor** -- 
 	color of the background overlay - defaulted to "#000"
-* _closeOnOverlayClick_ -- 
+* **closeOnOverlayClick** -- 
 	boolean for closing the lightbox on click of background overlay - defaulted to true
-* _photoService_ -- 
+* **photoService** -- 
 	which photo service to gather images from - no default - currently supports "flickr" or "instagram"
-* _photoServiceApiKey_ -- 
+* **photoServiceApiKey** -- 
 	your photo service api key for the above chosen photoService
-* _renderOnInit_ -- 
+* **renderOnInit** -- 
 	boolean for whether or not to render the html of the lightbox on initializtion or not - defaulted to true
-* _requestImagesOnInit_ -- 
+* **requestImagesOnInit** -- 
 	boolean for whether or not to request images from the above chosen photoService on initialization or not - defaulted to true
 
 ```js
@@ -139,17 +139,17 @@ Simple Lightbox comes with a default theme CSS file. If you'd like to creatae yo
 ##Methods
 The lightbox can be controlled entirely through methods on your instance. These are the available methods:
 
-* _close()_ - Closes the lightbox
-* _destroy()_ - Destroys the lightbox, removing it from the DOM and killing it's event listners
-* _next()_ - Slide to the next image
-* _off(evtName)_ - Stop lightbox from listening to passed in eventName string
-* _on(evtName, callback, ctx)_ - On eventName string call passed in callback with the passed in context ctx
-* _once(evtName, callback, ctx)_ - Just like .on() but will only fire a single time
-* _open()_ - Opens the lightbox
-* _prev()_ - Slide to the previous image
-* _render()_ - Render the html necessary for the lightbox. It's recommended to let the lightbox take care of this for you. 
-* _slideTo(slideNum)_ - Slide to the passed in number
-* _trigger (evtName, data)_ - trigger event associated with passed in evtName string passing along the data argument to your listeners
+* **close()** - Closes the lightbox
+* **destroy()** - Destroys the lightbox, removing it from the DOM and killing it's event listners
+* **next()** - Slide to the next image
+* **off(evtName)** - Stop lightbox from listening to passed in eventName string
+* **on(evtName, callback, ctx)** - On eventName string call passed in callback with the passed in context ctx
+* **once(evtName, callback, ctx)** - Just like .on() but will only fire a single time
+* **open()** - Opens the lightbox
+* **prev()** - Slide to the previous image
+* **render()** - Render the html necessary for the lightbox. It's recommended to let the lightbox take care of this for you. 
+* **slideTo(slideNum)** - Slide to the passed in number
+* **trigger (evtName, data)** - trigger event associated with passed in evtName string passing along the data argument to your listeners
 
 ##Example
 See an example of it running [here](http://www.dominic-c.com/simple-lightbox).
