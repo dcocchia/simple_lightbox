@@ -3,8 +3,8 @@
 ## Major features
 * With very little work, grab images from a variety of popular photo services 
 * No javascript dependencies! (all just vanilla JS)
-* Very accessability friendly
-* Animations entirely relient on CSS - very performant
+* Very accessibility friendly
+* Animations entirely reliant on CSS - very performant
 * Eventing system for hooking into from the outside :loudspeaker:
 * Themeable out of the box
 * Tons of options for configuration :neckbeard:
